@@ -2,6 +2,7 @@
 #define SNAKE_DISPLAY_H
 
 #include "primitives.hpp"
+#include "snake.hpp"
 
 #include <iostream>
 #include <vector>
@@ -10,10 +11,9 @@ class Display
 {
     private:
         char* output;
-        std::vector<Coord> parts;
-
     public:
         Coord display_size;
+        Snake snake;
         char none = '.';
         char food = '*';
         char body = '3';
