@@ -10,7 +10,7 @@ class Display
 {
     private:
         char* output;
-        std::vector<Coord> body;
+        std::vector<Coord> parts;
 
     public:
         Coord display_size;
@@ -24,7 +24,9 @@ class Display
         {
             display_size.x = x;
             display_size.y = y;
-            output = new char[x * y + 2];
+            //x + 1 for new lines in every line
+            // + 2 for \n + \0 at the end of the thing
+            output = new char[(x + 1) * y + 2];
         };
 
         ~Display()
@@ -38,14 +40,7 @@ class Display
 
         void draw() 
         {
-            for (int y = 0; y < display_size.y; y++)
-            {
-                for (int x = 0; x < display_size.x; x++)
-                {
-                    std::cout << clear;
-                }
-                std::cout << std::endl;
-            }
+            std::cout << output;
         };
 
         void redraw()
@@ -53,6 +48,5 @@ class Display
 
         };
 };
-
 
 #endif
