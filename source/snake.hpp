@@ -6,27 +6,34 @@
 
 class Snake 
 {
-    private:
-    std::vector<Coord>* parts;
     public:
-    Snake()
-    {
-        parts = new std::vector<Coord>();
-    };
-    ~Snake()
-    {
-        delete parts;
-    };
+        std::vector<Coord>* parts;
+        
+        Snake(Coord head)
+        {
+            parts = new std::vector<Coord>();
+            parts->push_back(head);
+        };
+        
+        ~Snake()
+        {
+            delete parts;
+        };
 
-    Coord get_head()
-    {
-        return parts->at(0);
-    };
+        void add_part(const Coord& part)
+        {
+            parts->push_back(part);
+        };
 
-    Coord get_tail()
-    {
-        return parts->at(parts->size() - 1);
-    };
+        Coord get_head()
+        {
+            return parts->at(0);
+        };
+
+        Coord get_tail()
+        {
+            return parts->at(parts->size() - 1);
+        };
 };
 
 #endif
