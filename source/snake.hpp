@@ -8,6 +8,7 @@ class Snake
 {
     public:
         std::vector<Coord>* parts;
+        Direction direction;
         
         Snake(Coord head)
         {
@@ -19,9 +20,14 @@ class Snake
         {
             delete parts;
         };
+        
+        void move()
+        {
+
+        };
 
         void add_part(const Coord& part)
-        {
+        { 
             parts->push_back(part);
         };
 
