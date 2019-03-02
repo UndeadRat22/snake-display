@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 class Display 
 {
@@ -13,6 +15,7 @@ class Display
         char* output;
     public:
         Coord display_size;
+        Coord food_pos;
         Snake snake = Snake(Coord(0, 0));
         char none = '.';
         char food = '*';
@@ -22,6 +25,7 @@ class Display
 
         Display(int x, int y)
         {
+            srand(time(0));
             display_size.x = x;
             display_size.y = y;
             //x + 1 for new lines in every line
@@ -30,6 +34,7 @@ class Display
             snake.add_part(Coord(1, 0));
             snake.add_part(Coord(2, 0));
             snake.add_part(Coord(3, 0));
+            food_pos = random_coords();
         };
 
         ~Display()
@@ -61,9 +66,19 @@ class Display
                 default:
                     break;
             }
+            if (snake.try_eat(food_pos))
+            {
+                food_pos = random_coords();
+            }
             snake.move(display_size.x, display_size.y);
-            
             draw_snake(snake);
+        };
+
+        Coord random_coords()
+        {
+            int rand_x = rand() % display_size.x;
+            int rand_y = rand() % display_size.y;
+            return Coord(rand_x, rand_y);
         };
 
         void draw_snake(Snake& __snake)
@@ -75,8 +90,9 @@ class Display
             }
             Coord h = __snake.get_head();
             output[index_from_coords(h.x, h.y)] = head;
-        }
+        };
 
+        //could be done way easier, but was doing some testin :D
         void clear(){
             for (int y = 0; y < display_size.y; y++)
             {
@@ -88,6 +104,8 @@ class Display
                         output[index_from_coords(x, y)] = none;
                 }
             }
+            //draw food
+            output[index_from_coords(food_pos.x, food_pos.y)] = food;
         };
 
         void draw() 

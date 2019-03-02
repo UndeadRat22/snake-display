@@ -2,6 +2,7 @@
 #define SNAKE_DATA_H
 
 #include "primitives.hpp"
+#include <queue>
 #include <vector>
 #include <iostream>
 
@@ -46,10 +47,11 @@ class Snake
         Direction direction = NEG_X;
     public:
         std::vector<Coord>* parts;
-
+        std::queue<Coord>* eaten;
         Snake(Coord head)
         {
             parts = new std::vector<Coord>();
+            eaten = new std::queue<Coord>();
             parts->push_back(head);
             update_speed();
         };
@@ -57,18 +59,27 @@ class Snake
         ~Snake()
         {
             delete parts;
+            delete eaten;
         };
+
+        void eat(const Coord& c)
+        {
+            if (parts->size() == 1)
+                parts->push_back( c );
+            else
+                parts->insert(parts->begin(), 1, c);
+        }
 
         bool set_direction(Direction dir)
         {
             if (dir != opposite(direction))
             {
                 direction = dir;
-                update_speed();
+                update_speed(); 
                 return true;
             }
             return false;
-        }
+        };
         
         void move(const int& lim_x, const int& lim_y)
         {
@@ -81,7 +92,18 @@ class Snake
             (*parts)[0] = Coord((head.x + speed_x + lim_x) % lim_x, (head.y + speed_y + lim_x) % lim_y);
         };
 
-        bool is_gameover()
+        bool try_eat(const Coord& __food)
+        {
+            Coord head = get_head();
+            if ((head.x == __food.x) && (head.y == __food.y))
+            {
+                eat(__food);
+                return true;
+            }
+            return false;
+        };
+
+        bool is_dead()
         {
             Coord head = get_head();
             for (int i = 1; i < parts->size(); i ++){
