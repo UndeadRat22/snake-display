@@ -44,6 +44,7 @@ class Display
 
         void update(){
             clear();
+            snake.move(display_size.x, display_size.y);
             draw_snake();
         };
 
