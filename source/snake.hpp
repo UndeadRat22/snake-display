@@ -64,6 +64,7 @@ class Snake
             if (dir != opposite(direction))
             {
                 direction = dir;
+                update_speed();
                 return true;
             }
             return false;

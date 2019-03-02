@@ -1,6 +1,7 @@
-#include <unistd.h>
-#include <termios.h>
-    
+#include <stdio.h>
+#include <unistd.h>   //_getch*/
+#include <termios.h>  //_getch*/
+
 char getch(){
     char buf=0;
     struct termios old={0};
@@ -21,4 +22,4 @@ char getch(){
         perror ("tcsetattr ~ICANON");
     printf("%c\n",buf);
     return buf;
-}
+ }
