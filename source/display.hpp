@@ -42,20 +42,38 @@ class Display
             return x + y + (display_size.x * y);
         };
 
-        void update(){
+        void update(const char& input){
             clear();
+            switch (input)
+            {
+                case 'a':
+                    snake.set_direction(NEG_X);
+                    break;
+                case 'd':
+                    snake.set_direction(POS_X);
+                    break;    
+                case 'w':
+                    snake.set_direction(NEG_Y);
+                    break;
+                case 's':
+                    snake.set_direction(POS_Y);
+                    break;
+                default:
+                    break;
+            }
             snake.move(display_size.x, display_size.y);
-            draw_snake();
+            
+            draw_snake(snake);
         };
 
-        void draw_snake()
+        void draw_snake(Snake& __snake)
         {
-            for (int i = 0; i < snake.parts->size(); i++)
+            for (int i = 0; i < __snake.parts->size(); i++)
             {
-                Coord c = snake.parts->at(i);
+                Coord c = __snake.parts->at(i);
                 output[index_from_coords(c.x, c.y)] = body;
             }
-            Coord h = snake.get_head();
+            Coord h = __snake.get_head();
             output[index_from_coords(h.x, h.y)] = head;
         }
 

@@ -3,6 +3,7 @@
 
 #include "primitives.hpp"
 #include <vector>
+#include <iostream>
 
 class Snake 
 {
@@ -42,7 +43,7 @@ class Snake
                     break;
             }
         };
-        Direction direction = POS_X;
+        Direction direction = NEG_X;
     public:
         std::vector<Coord>* parts;
 
@@ -75,7 +76,20 @@ class Snake
                 Coord next = parts->at(i - 1);
                 (*parts)[i] = next;
             }
+            Coord head = get_head();
+            (*parts)[0] = Coord((head.x + speed_x + lim_x) % lim_x, (head.y + speed_y + lim_x) % lim_y);
         };
+
+        bool is_gameover()
+        {
+            Coord head = get_head();
+            for (int i = 1; i < parts->size(); i ++){
+                Coord c = (*parts)[i];
+                if ((head.x == c.x) && (head.y == c.y))
+                    return true;
+            }
+            return false;
+        }
 
         void add_part(const Coord& part)
         { 
