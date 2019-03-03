@@ -16,5 +16,4 @@ int main(int argc, char** argv)
         d->draw();
     } while (input != 'q');
     delete d;
-    return -1;
 }
