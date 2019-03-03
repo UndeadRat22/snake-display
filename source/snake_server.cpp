@@ -104,5 +104,10 @@ int main(int argc, char** argv)
     {
         std::cout << (int)buffer[0] << " " << (int)buffer[1] << std::endl;
     }
+    sent_len = send(client_socket, buffer, 2, 0);
+    if (sent_len < 2)
+    {
+        std::cerr << "failed to send msg" << std::endl;
+    }
     clean_exit(client_socket, listen_socket, 0);
 }

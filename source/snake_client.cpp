@@ -69,10 +69,27 @@ int main(int argc, char** argv)
         std::cerr << "Could not connect (server down | wrong ip | wrong port)." << std::endl;
         clean_exit(server_socket, 1);
     }
+    // send height width info
     int width, height;
     std::cin >> width >> height;
     //send 2 bytes w / h
     buffer[0] = (char) width;
     buffer[1] = (char) height;
-    send(server_socket, buffer, 2, 0);
+    int sent_l = send(server_socket, buffer, 2, 0);
+    if (sent_l < 1)
+    {
+        std::cerr << "Failed to send game info to server" << std::endl;
+        clean_exit(server_socket, 1);
+    }
+    int recv_l = recv(server_socket, buffer, 2, 0);
+    if ((recv_l < 1) || ((int) buffer[0] != width) || ((int) buffer[1] != height))
+    {
+        std::cerr << "Failed to get game info from server" << std::endl;
+        clean_exit(server_socket, 1);
+    }
+    else
+    {
+        std::cout << "les go" << std::endl;
+    }
+    clean_exit(server_socket, 0);
 }
