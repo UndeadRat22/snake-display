@@ -73,7 +73,7 @@ int main(int argc, char** argv)
         clean_exit(listen_socket, 0, 1);
     }
 
-    while (1)
+    /*while (1)
     {
         memset(&server_addr, 0, sizeof(server_addr));
         memset(&buffer, 0, sizeof(buffer));
@@ -89,5 +89,20 @@ int main(int argc, char** argv)
             std::cout << "Failed to receive data from client" << std::endl;
             clean_exit(client_socket, listen_socket, 1);
         }
+    }*/
+    memset(&server_addr, 0, sizeof(server_addr));
+    memset(&buffer, 0, sizeof(buffer));
+    if  ((client_socket = accept(listen_socket, (struct sockaddr*) &client_addr, &client_addr_len))< 0)
+    {
+        std::cerr << "Error occured when accepting a connection" << std::endl;
+        clean_exit(client_socket, listen_socket, 1);
     }
+    recv_len = recv(client_socket, buffer, sizeof(buffer), 0);
+    if (recv_len < 1)
+        clean_exit(client_socket, listen_socket, 1);
+    if (recv_len == 2)
+    {
+        std::cout << (int)buffer[0] << " " << (int)buffer[1] << std::endl;
+    }
+    clean_exit(client_socket, listen_socket, 0);
 }

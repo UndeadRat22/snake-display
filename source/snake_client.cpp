@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
     if (connect(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
     {
-        std::cerr << "Could not connect()." << std::endl;
+        std::cerr << "Could not connect (server down | wrong ip | wrong port)." << std::endl;
         clean_exit(server_socket, 1);
     }
     int width, height;
