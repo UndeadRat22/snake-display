@@ -15,13 +15,14 @@ struct reply
 {
     int msg_size;
     char* content;
-}
+};
 
 class SnakeClient
 {
     private:
         char buffer[BUFSIZE];
-        
+        int filled = 0;
+
         unsigned int port;
         struct sockaddr_in server_addr;
         int server_socket;
@@ -54,9 +55,34 @@ class SnakeClient
             return !(connect(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0);
         };
 
-        bool send_message(char* __msg, const int& __size)
+        bool buffer_byte(const char& __byte)
         {
-            //TODO
+            if (filled >= BUFSIZE)
+                return false;
+            buffer[filled] = __byte;
+            filled++;
+            return true;
+        };
+
+        bool send_message()
+        {
+            sent_len = send(server_socket, buffer, filled, 0);    
+            bool success = sent_len == filled;
+            filled = 0;
+            return success;
+        };
+
+        bool recv_message(int __size)
+        {
+            std::cout << "recv.." << std::endl;
+            recv_len = recv(server_socket, buffer, __size, 0);
+            std::cout << "finished" << std::endl;
+            return recv_len == __size;
+        };
+
+        char* get_buffer()
+        {
+            return buffer;
         };
 
         ~SnakeClient()
@@ -64,8 +90,8 @@ class SnakeClient
             dispose();
         };
         
-        dispose()
+        void dispose()
         {
             close(server_socket);
         };
-}
+};

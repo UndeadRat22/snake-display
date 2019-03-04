@@ -1,10 +1,5 @@
-/*
-* unix socket stuff
-*/
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
+#include "snake_client.hpp"
 
 #include <iostream>
 
@@ -35,7 +30,7 @@ int main(int argc, char** argv)
         std::cerr << "Wrong port specified" << std::endl;
         exit(1);
     }
-
+    std::cout << "creating_socket" << std::endl;
     if (!client.create_socket())
     {
         std::cerr << "Could not create socket!" << std::endl;
@@ -48,7 +43,7 @@ int main(int argc, char** argv)
         client.dispose();
         exit(1);
     }
-
+    std::cout << "connecting to server" << std::endl;
     if (!client.connect_to_server())
     {
         std::cerr << "Could not connect (server down | wrong ip | wrong port)." << std::endl;
@@ -57,25 +52,28 @@ int main(int argc, char** argv)
     }
     // send height width info;
     int width, height;
+    std::cout << "w / h" << std::endl;
     std::cin >> width >> height;
-    //send 2 bytes w / h
-    buffer[0] = (char) width;
-    buffer[1] = (char) height;
-    int sent_l = send(server_socket, buffer, 2, 0);
-    if (sent_l < 1)
+
+    std::cout << "buffering" << std::endl;
+    client.buffer_byte((char) width);
+    client.buffer_byte((char) height);
+    std::cout << "sending" << std::endl;
+    if (!client.send_message())
     {
         std::cerr << "Failed to send game info to server" << std::endl;
-        clean_exit(server_socket, 1);
+        client.dispose();
+        exit(1);
     }
-    int recv_l = recv(server_socket, buffer, 2, 0);
-    if ((recv_l < 1) || ((int) buffer[0] != width) || ((int) buffer[1] != height))
+    if (!client.recv_message(2))
     {
         std::cerr << "Failed to get game info from server" << std::endl;
-        clean_exit(server_socket, 1);
+        client.dispose();
+        exit(1);
     }
     else
     {
-        std::cout << "les go" << std::endl;
+        std::cout << (int) (client.get_buffer() [0]) << std::endl;
     }
-    clean_exit(server_socket, 0);
+    client.dispose();
 }
