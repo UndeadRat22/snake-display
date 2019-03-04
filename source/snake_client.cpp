@@ -7,14 +7,6 @@
 #include <string.h> //memset
 #include <unistd.h>
 
-#define BUFSIZE 1024
-
-void clean_exit(int __s1, int code)
-{
-    close(__s1);
-    exit(code);
-}
-
 int main(int argc, char** argv)
 {
     if (argc != 3)
