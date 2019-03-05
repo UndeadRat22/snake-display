@@ -80,10 +80,11 @@ class SnakeServer
             return success;
         };
 
-        bool recv_message(int __size)
+        bool recv_message(const int& __size)
         {
             int recv_len = recv(client_socket, buffer, sizeof(buffer), 0);
-            return recv_len == __size;
+            filled = recv_len;
+            return recv_len > 0;
         };
 
         char* get_buffer()
