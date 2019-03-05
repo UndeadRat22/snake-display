@@ -1,3 +1,6 @@
+#ifndef SNAKE_CLIENT_H
+#define SNAKE_CLIENT_H
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -95,3 +98,5 @@ class SnakeClient
             close(server_socket);
         };
 };
+
+#endif

@@ -1,25 +1,6 @@
-/*
-* unix socket stuff
-*/
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include "SnakeServer.hpp"
 
 #include <iostream>
-
-#include <stdlib.h>
-#include <string.h> //memset
-#include <unistd.h>
-
-#define BUFSIZE 1024
-
-void clean_exit(int __s1, int __s2, int code)
-{
-    close(__s1);
-    close(__s2);
-    exit(code);
-}
 
 int main(int argc, char** argv)
 {
@@ -42,6 +23,8 @@ int main(int argc, char** argv)
         std::cout << "USAGE " << argv[0] << " <port>" << std::endl;
         exit(1);
     }
+
+    SnakeServer server;
 
     port = atoi(argv[1]);
 

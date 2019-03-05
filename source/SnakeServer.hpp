@@ -1,3 +1,6 @@
+#ifndef SNAKE_SERVER_H
+#define SNAKE_SERVER_H
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -52,6 +55,7 @@ class SnakeServer
             return (listen(listen_socket, __n) >= 0);
         };
 
+
         bool buffer_byte(const char& __byte)
         {
             if (filled >= BUFSIZE)
@@ -61,9 +65,16 @@ class SnakeServer
             return true;
         };
 
+        bool accept_client()
+        {
+            memset(&server_addr, 0, sizeof(server_addr));
+            memset(&buffer, 0, sizeof(buffer));
+            return !((client_socket = accept(listen_socket, (struct sockaddr*) &client_addr, &client_addr_len))< 0);
+        };
+
         bool send_message()
         {
-            sent_len = send(server_socket, buffer, filled, 0);    
+            int sent_len = send(client_socket, buffer, filled, 0);    
             bool success = sent_len == filled;
             filled = 0;
             return success;
@@ -71,9 +82,7 @@ class SnakeServer
 
         bool recv_message(int __size)
         {
-            std::cout << "recv.." << std::endl;
-            recv_len = recv(server_socket, buffer, __size, 0);
-            std::cout << "finished" << std::endl;
+            int recv_len = recv(client_socket, buffer, sizeof(buffer), 0);
             return recv_len == __size;
         };
 
@@ -89,6 +98,9 @@ class SnakeServer
         
         void dispose()
         {
-            close(server_socket);
+            close(listen_socket);
+            close(client_socket);
         };
 };
+
+#endif
