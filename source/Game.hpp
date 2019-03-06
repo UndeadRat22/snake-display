@@ -9,21 +9,21 @@
 #include <stdlib.h>
 #include <time.h>
 
-class Display 
+class Game
 {
     private:
         char* output;
     public:
         Coord display_size;
         Coord food_pos;
-        Snake snake = Snake(Coord(0, 0));
+        Snake* snake1;
+        Snake* snake2;
         char none = '.';
         char food = '*';
         char body = '3';
         char head = '@';
      
-
-        Display(int x, int y)
+        Game(int x, int y, Coord s1, Coord s2, Coord f)
         {
             srand(time(0));
             display_size.x = x;
@@ -31,15 +31,16 @@ class Display
             //x + 1 for new lines in every line
             // + 1 for \n + \0 at the end of the thing
             output = new char[(x + 1) * y + 1];
-            snake.add_part(Coord(1, 0));
-            snake.add_part(Coord(2, 0));
-            snake.add_part(Coord(3, 0));
-            food_pos = random_coords();
+            snake1 = new Snake(s1);
+            snake2 = new Snake(s2);
+            food_pos = f;
         };
 
-        ~Display()
+        ~Game()
         {
             delete output;
+            delete snake1;
+            delete snake2;
         };
 
         int index_from_coords(const int& x, const int& y)
@@ -47,31 +48,67 @@ class Display
             return x + y + (display_size.x * y);
         };
 
-        void update(const char& input){
+        char update(const char& input1, const char& input2){
             clear();
-            switch (input)
+            switch (input1)
             {
                 case 'a':
-                    snake.set_direction(NEG_X);
+                    snake1->set_direction(NEG_X);
                     break;
                 case 'd':
-                    snake.set_direction(POS_X);
+                    snake1->set_direction(POS_X);
                     break;    
                 case 'w':
-                    snake.set_direction(NEG_Y);
+                    snake1->set_direction(NEG_Y);
                     break;
                 case 's':
-                    snake.set_direction(POS_Y);
+                    snake1->set_direction(POS_Y);
                     break;
                 default:
                     break;
             }
-            if (snake.try_eat(food_pos))
+            switch (input2)
             {
-                food_pos = random_coords();
+                case 'a':
+                    snake2->set_direction(NEG_X);
+                    break;
+                case 'd':
+                    snake2->set_direction(POS_X);
+                    break;    
+                case 'w':
+                    snake2->set_direction(NEG_Y);
+                    break;
+                case 's':
+                    snake2->set_direction(POS_Y);
+                    break;
+                default:
+                    break;
             }
-            snake.move(display_size.x, display_size.y);
-            draw_snake(snake);
+            bool s1_ate = snake1->try_eat(food_pos);
+            bool s2_ate = snake2->try_eat(food_pos);
+            bool s1_dead = snake1->is_dead(*snake2);
+            bool s2_dead = snake2->is_dead(*snake1);
+            std::cout 
+                << s1_ate << " "
+                << s2_ate << " "
+                << s1_dead << " "
+                << s2_dead << "\n";
+
+            snake1->move(display_size.x, display_size.y);
+            snake2->move(display_size.x, display_size.y);
+            draw_snake(*snake1);
+            draw_snake(*snake2);
+            return make_mask(s1_ate, s2_ate, s1_dead, s2_dead);
+        };
+
+        char make_mask(const bool& __s1a, const bool& __s2a, const bool& __s1d, const bool& __s2d)
+        {
+            char mask = 0;
+            mask |= __s1d ? 8 : 0;
+            mask |= __s2d ? 4 : 0;
+            mask |= __s1a ? 2 : 0;
+            mask |= __s2a ? 1 : 0;
+            return mask;
         };
 
         Coord random_coords()
@@ -81,11 +118,10 @@ class Display
             return Coord(rand_x, rand_y);
         };
 
-        void draw_snake(Snake& __snake)
+        void draw_snake(const Snake& __snake)
         {
-            for (int i = 0; i < __snake.parts->size(); i++)
+            for (auto c : *__snake.parts)
             {
-                Coord c = __snake.parts->at(i);
                 output[index_from_coords(c.x, c.y)] = body;
             }
             Coord h = __snake.get_head();

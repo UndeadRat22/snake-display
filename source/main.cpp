@@ -1,19 +1,25 @@
 #include "conutil.h"
 
-#include "display.hpp"
+#include "Game.hpp"
+#include "ClientDisplay.hpp"
 
 #include <iostream>
 
 
 int main(int argc, char** argv)
 {
-    Display* d = new Display(10, 10);
-    char input;
+    Game* d = new Game(10, 10, Coord(0,0), Coord(0, 5), Coord(5, 4));
+    ClientDisplay* cd = new ClientDisplay();
+    char input1, input2;
     do 
     {
-        input = getch();
-        d->update(input);
+        char result = d->update(input1, input2);
+        cd->parse_mask(result);
+        cd->print_state();
         d->draw();
-    } while (input != 'q');
+        input1 = getch();
+        input2 = getch();
+    } while (input1 != 'q');
     delete d;
+    delete cd;
 }

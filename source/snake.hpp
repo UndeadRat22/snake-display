@@ -47,11 +47,12 @@ class Snake
         Direction direction = NEG_X;
     public:
         std::vector<Coord>* parts;
-        std::queue<Coord>* eaten;
+        
+        Snake(){};
+
         Snake(Coord head)
         {
             parts = new std::vector<Coord>();
-            eaten = new std::queue<Coord>();
             parts->push_back(head);
             update_speed();
         };
@@ -59,7 +60,6 @@ class Snake
         ~Snake()
         {
             delete parts;
-            delete eaten;
         };
 
         void eat(const Coord& c)
@@ -72,7 +72,7 @@ class Snake
 
         bool set_direction(Direction dir)
         {
-            if (dir != opposite(direction))
+            if (parts->size() == 1 || dir != opposite(direction))
             {
                 direction = dir;
                 update_speed(); 
@@ -83,7 +83,7 @@ class Snake
         
         void move(const int& lim_x, const int& lim_y)
         {
-            for (int i = parts->size(); i > 0; i--)
+            for (unsigned int i = parts->size(); i > 0; i--)
             {
                 Coord next = parts->at(i - 1);
                 (*parts)[i] = next;
@@ -103,12 +103,17 @@ class Snake
             return false;
         };
 
-        bool is_dead()
+        bool is_dead(const Snake& other) const
         {
             Coord head = get_head();
             for (int i = 1; i < parts->size(); i ++){
                 Coord c = (*parts)[i];
                 if ((head.x == c.x) && (head.y == c.y))
+                    return true;
+            }
+            for (auto c : (*other.parts))
+            {
+                if (c.x == head.x && c.y == head.y)
                     return true;
             }
             return false;
@@ -119,12 +124,12 @@ class Snake
             parts->push_back(part);
         };
 
-        Coord get_head()
+        Coord get_head() const
         {
             return parts->at(0);
         };
 
-        Coord get_tail()
+        Coord get_tail() const
         {
             return parts->at(parts->size() - 1);
         };

@@ -12,11 +12,11 @@ mask 1Byte:
     ---- vvff
     v - victor
     f - food
-    ----10-- : client 2 won
-    ----01-- : client 1 won
+    ----10-- : client 1 lost
+    ----01-- : client 2 lost
     ----11-- : draw
-    ------1- : client 2 ate food
-    -------1 : client 1 ate food
+    ------1- : client 1 ate food
+    -------1 : client 2 ate food
     ------11 : draw (game over), same as ----11--,
     should be sent as ----1111
 

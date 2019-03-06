@@ -1,5 +1,6 @@
 
 #include "snake_client.hpp"
+#include "display.hpp"
 
 #include <iostream>
 
@@ -63,9 +64,12 @@ int main(int argc, char** argv)
         client.dispose();
         exit(1);
     }
-    else
-    {
-        std::cout << (int) (client.get_buffer() [0]) << std::endl;
-    }
+    //if we got the two bytes, then we have the display width and height 
+    //(these can be different can be different from the rq ones)
+    width = (int) (client.get_buffer()[0]);
+    height = (int) (client.get_buffer()[1]);
+
+
+
     client.dispose();
 }
