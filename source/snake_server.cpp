@@ -37,14 +37,14 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    if  (!server.accept_client())
+    if  (!server.accept_clients())
     {
         std::cerr << "Error occured when accepting a connection" << std::endl;
         server.dispose();
         exit(1);
     }
 
-    if (!server.recv_message(2))
+    if (!server.recv_msg(2, true))
     {
         std::cerr << "Error in recv" << std::endl;
         server.dispose();

@@ -1,0 +1,24 @@
+[C1] -> [S]: [Hi] Start Game, w, h
+[S] -> [C1]: [Hi] Ok, snake1
+[C2] -> [S]: [Hi] Start Game, w, h
+[S] -> [C2]: [Hi] Ok, snake2
+
+[S] -> [C1]: [Init] Ok, w = c1.w, h = c1.h
+[S] -> [C2]: [Init] Ok, w = c1.w, h = c1.h
+
+loop:
+[C1], [C2] -> [S]: [Game] direction
+mask 1Byte:
+    ---- vvff
+    v - victor
+    f - food
+    ----10-- : client 2 won
+    ----01-- : client 1 won
+    ----11-- : draw
+    ------1- : client 2 ate food
+    -------1 : client 1 ate food
+    ------11 : draw (game over), same as ----11--,
+    should be sent as ----1111
+
+[S] -> [C1], [C2]: [Game] s1.head, s2.head, food, mask
+while !gameover goto loop

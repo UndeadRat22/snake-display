@@ -22,12 +22,15 @@ class SnakeServer
 
         unsigned int port;
         int listen_socket;
-        int client_socket;
+        int client1_socket;
+        int client2_socket;
 
         struct sockaddr_in server_addr;
-        struct sockaddr_in client_addr;
+        struct sockaddr_in client1_addr;
+        struct sockaddr_in client2_addr;
 
-        unsigned int client_addr_len;
+        unsigned int client1_addr_len;
+        unsigned int client2_addr_len;
 
     public:
         bool create_listen_socket()
@@ -65,24 +68,27 @@ class SnakeServer
             return true;
         };
 
-        bool accept_client()
+        bool accept_clients()
         {
             memset(&server_addr, 0, sizeof(server_addr));
             memset(&buffer, 0, sizeof(buffer));
-            return !((client_socket = accept(listen_socket, (struct sockaddr*) &client_addr, &client_addr_len))< 0);
+            client1_socket = accept(listen_socket, (struct sockaddr*) &client1_addr, &client1_addr_len);
+            client2_socket = accept(listen_socket, (struct sockaddr*) &client2_addr, &client2_addr_len);
+            return (client1_socket >= 0) || (client2_socket >= 0);
         };
 
         bool send_message()
         {
-            int sent_len = send(client_socket, buffer, filled, 0);    
-            bool success = sent_len == filled;
+            int sent_len1 = send(client1_socket, buffer, filled, 0);    
+            int sent_len2 = send(client2_socket, buffer, filled, 0);
+            bool success = (sent_len1 == filled) && (sent_len1 == filled);
             filled = 0;
             return success;
         };
 
-        bool recv_message(const int& __size)
+        bool recv_msg(const int& __size, const bool& c1 = true)
         {
-            int recv_len = recv(client_socket, buffer, sizeof(buffer), 0);
+            int recv_len = recv(c1 ? client1_socket : client2_socket, buffer, sizeof(buffer), 0);
             filled = recv_len;
             return recv_len > 0;
         };
@@ -100,7 +106,8 @@ class SnakeServer
         void dispose()
         {
             close(listen_socket);
-            close(client_socket);
+            close(client1_socket);
+            close(client2_socket);
         };
 };
 
