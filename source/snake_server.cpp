@@ -1,5 +1,9 @@
 #include "SnakeServer.hpp"
 
+#include "ClientDisplay.hpp"
+#include "Game.hpp"
+#include "primitives.hpp"
+
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -82,43 +86,64 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    server.clear_buffer();
 
     //start game pretty much
-    //s1 pos
-    server.buffer_byte(5);
-    server.buffer_byte(6);
-    //s2 pos
-    server.buffer_byte(7);
-    server.buffer_byte(8);
-    //f pos
-    server.buffer_byte(4);
-    server.buffer_byte(4);
-    //flags
-    server.buffer_byte(5);
-
-    if (!server.send_msg_both())
+    
+    Game* game = new Game(width, height);
+    ClientDisplay* display = new ClientDisplay();
+    char flags = 0;
+    while (true)
     {
-        std::cerr << "Can't send game info to clients!" << std::endl;
-        server.dispose();
-        exit(1);
-    }
+        server.clear_buffer();
+        //s1 pos
+        Coord s1p = game->snake1->get_head();
+        Coord s2p = game->snake2->get_head();
+        Coord fp = game->food_pos;
+        server.buffer_byte(s1p.x);
+        server.buffer_byte(s1p.y);
+        //s2 pos
+        server.buffer_byte(s2p.x);
+        server.buffer_byte(s2p.y);
+        //f pos
+        server.buffer_byte(fp.x);
+        server.buffer_byte(fp.y);
+        //flags
+        std::cout << (int) flags << std::endl;
+        server.buffer_byte(flags);
 
-    //get input from clients
-    //c1
-    if (!server.recv_msg(1, true))
-    {
-        std::cerr << "Could not get user input from client1" << std::endl;
-        server.dispose();
-        exit(1);
-    }
-    //c2
-    if (!server.recv_msg(1, false))
-    {
-        std::cerr << "Could not get user input from client1" << std::endl;
-        server.dispose();
-        exit(1);
-    }
+        if (!server.send_msg_both())
+        {
+            std::cerr << "Can't send game info to clients!" << std::endl;
+            server.dispose();
+            exit(1);
+        }
 
+
+        char i1, i2;
+        //get input from clients
+        //c1
+        if (!server.recv_msg(1, true))
+        {
+            std::cerr << "Could not get user input from client1" << std::endl;
+            server.dispose();
+            exit(1);
+        }
+        i1 = server.get_buffer()[0];
+        //c2
+        if (!server.recv_msg(1, false))
+        {
+            std::cerr << "Could not get user input from client1" << std::endl;
+            server.dispose();
+            exit(1);
+        }
+        i2 = server.get_buffer()[0];
+        flags = game->update(i1, i2);
+        game->draw();
+        display->parse_mask(flags);
+        if (display->won() || display->lost())
+            break;
+    }
+    delete game;
+    delete display;
     server.dispose();
 }

@@ -1,4 +1,3 @@
-
 #include "snake_client.hpp"
 #include "ClientDisplay.hpp"
 
@@ -70,44 +69,61 @@ int main(int argc, char** argv)
     height = (int) (client.get_buffer()[1]);
     display.is_snake1 = (bool) (client.get_buffer()[2]);
 
-    //2bytes s1-pos, 2bytes s2-pos, 2bytes fpos, 1 byte flags
-    // 2 + 2 + 2 + 1 = 7
-    if (!client.recv_message(7))
+    while(true)
     {
-        std::cerr << "Server did not respond, exiting" << std::endl;
-        client.dispose();
-        exit(1);
-    }
+        //2bytes s1-pos, 2bytes s2-pos, 2bytes fpos, 1 byte flags
+        // 2 + 2 + 2 + 1 = 7
+        if (!client.recv_message(7))
+        {
+            std::cerr << "Server did not respond, exiting" << std::endl;
+            client.dispose();
+            exit(1);
+        }
 
-    char* resp = client.get_buffer();
-    
-    int s1x = (int) resp[0];
-    int s1y = (int) resp[1];
-    
-    int s2x = (int) resp[2];
-    int s2y = (int) resp[3];
+        char* resp = client.get_buffer();
+        
+        int s1x = (int) resp[0];
+        int s1y = (int) resp[1];
+        
+        int s2x = (int) resp[2];
+        int s2y = (int) resp[3];
 
-    int fx = (int) resp[4];
-    int fy = (int) resp[5];
+        int fx = (int) resp[4];
+        int fy = (int) resp[5];
 
-    std::cout 
-        << s1x << " " << s1y << "\n"
-        << s2x << " " << s2y << "\n"
-        << fx << " " << fy << "\n";
-    std::cout 
-        << (display.is_snake1 ? "true" : "false") << "\n";
-    display.parse_mask(resp[6]);
-    display.print_state();
+        std::cout 
+            << s1x << " " << s1y << "\n"
+            << s2x << " " << s2y << "\n"
+            << fx << " " << fy << "\n";
+        std::cout 
+            << (display.is_snake1 ? "true" : "false") << "\n";
+        display.parse_mask(resp[6]);
+        display.print_state();
 
-    char input = 'a';
+        client.clear_buffer();
+        char input;
 
-    client.buffer_byte(input);
+        std::cin >> input;
 
-    if (!client.send_message())
-    {
-        std::cerr << "Failed to send input to server" << std::endl;
-        client.dispose();
-        exit(1);
+        client.buffer_byte(input);
+
+        if (!client.send_message())
+        {
+            std::cerr << "Failed to send input to server" << std::endl;
+            client.dispose();
+            exit(1);
+        }
+
+        if (display.won())
+        {
+            std::cout << "you won!" << std::endl;
+            break;
+        }
+        if (display.lost())
+        {
+            std::cout << "you lost!" << std::endl;
+            break;
+        }
     }
     client.dispose();
 }

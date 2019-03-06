@@ -67,6 +67,12 @@ class SnakeClient
             return true;
         };
 
+        void clear_buffer()
+        {
+            memset(buffer, 0, sizeof(buffer));
+            filled = 0;
+        };
+
         bool send_message()
         {
             sent_len = send(server_socket, buffer, filled, 0);    
@@ -80,6 +86,7 @@ class SnakeClient
             std::cout << "recv.." << std::endl;
             recv_len = recv(server_socket, buffer, __size, 0);
             std::cout << "finished" << std::endl;
+            filled = recv_len;
             return recv_len == __size;
         };
 

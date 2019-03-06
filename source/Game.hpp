@@ -23,17 +23,17 @@ class Game
         char body = '3';
         char head = '@';
      
-        Game(int x, int y, Coord s1, Coord s2, Coord f)
+        Game(int __w, int __h)
         {
             srand(time(0));
-            display_size.x = x;
-            display_size.y = y;
+            display_size.x = __w;
+            display_size.y = __h;
             //x + 1 for new lines in every line
             // + 1 for \n + \0 at the end of the thing
-            output = new char[(x + 1) * y + 1];
-            snake1 = new Snake(s1);
-            snake2 = new Snake(s2);
-            food_pos = f;
+            output = new char[(__w + 1) * __h + 1];
+            snake1 = new Snake(random_coords());
+            snake2 = new Snake(random_coords());
+            food_pos = random_coords();
         };
 
         ~Game()
@@ -84,12 +84,11 @@ class Game
                 default:
                     break;
             }
-            bool s1_ate = snake1->try_eat(food_pos);
-            bool s2_ate = snake2->try_eat(food_pos);
-            
             bool s1_dead = snake1->is_dead(*snake2);
             bool s2_dead = snake2->is_dead(*snake1);
             
+            bool s1_ate = snake1->try_eat(food_pos);
+            bool s2_ate = snake2->try_eat(food_pos);
 
             snake1->move(display_size.x, display_size.y);
             snake2->move(display_size.x, display_size.y);

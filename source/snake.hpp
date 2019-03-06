@@ -89,7 +89,7 @@ class Snake
                 (*parts)[i] = next;
             }
             Coord head = get_head();
-            (*parts)[0] = Coord((head.x + speed_x + lim_x) % lim_x, (head.y + speed_y + lim_x) % lim_y);
+            (*parts)[0] = Coord((head.x + speed_x + lim_x) % lim_x, (head.y + speed_y + lim_y) % lim_y);
         };
 
         bool try_eat(const Coord& __food)
@@ -105,19 +105,19 @@ class Snake
 
         bool is_dead(const Snake& other) const
         {
-            Coord head = get_head();
+            Coord head = this->get_head();
             for (int i = 1; i < parts->size(); i ++){
                 Coord c = (*parts)[i];
                 if ((head.x == c.x) && (head.y == c.y))
                     return true;
             }
-            for (auto c : (*other.parts))
+            for (auto c : (*(other.parts)))
             {
                 if (c.x == head.x && c.y == head.y)
                     return true;
             }
             return false;
-        }
+        };
 
         void add_part(const Coord& part)
         { 

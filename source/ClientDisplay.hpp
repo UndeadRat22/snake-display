@@ -37,7 +37,18 @@ class ClientDisplay
                 << state.c2_lost << " "
                 << state.c1_ate << " "
                 << state.c2_ate << "\n";
-        }
+        };
+
+        bool won()
+        {
+            return (is_snake1 && !state.c1_lost && state.c2_lost) 
+                || (!is_snake1 && !state.c2_lost && state.c1_lost);
+        };
+
+        bool lost()
+        {
+            return is_snake1 ? state.c1_lost : state.c2_lost;
+        };
 };
 
 #endif
