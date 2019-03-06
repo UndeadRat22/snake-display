@@ -1,10 +1,7 @@
 [C1] -> [S]: [Hi] Start Game, w, h
-[S] -> [C1]: [Hi] Ok, snake1
 [C2] -> [S]: [Hi] Start Game, w, h
-[S] -> [C2]: [Hi] Ok, snake2
-
-[S] -> [C1]: [Init] Ok, w = c1.w, h = c1.h
-[S] -> [C2]: [Init] Ok, w = c1.w, h = c1.h
+[S] -> [C1]: [Hi] Ok w\h, snake1
+[S] -> [C2]: [Hi] Ok w\h, snake2
 
 loop:
 [C1], [C2] -> [S]: [Game] direction

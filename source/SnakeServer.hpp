@@ -68,6 +68,15 @@ class SnakeServer
             return true;
         };
 
+        bool unbuffer_byte()
+        {
+            if (filled == 0)
+                return false;
+            filled--;
+            buffer[filled] = 0;
+            return true;
+        };
+
         bool accept_clients()
         {
             memset(&server_addr, 0, sizeof(server_addr));
@@ -77,7 +86,7 @@ class SnakeServer
             return (client1_socket >= 0) || (client2_socket >= 0);
         };
 
-        bool send_message()
+        bool send_msg_both()
         {
             int sent_len1 = send(client1_socket, buffer, filled, 0);    
             int sent_len2 = send(client2_socket, buffer, filled, 0);
@@ -86,11 +95,24 @@ class SnakeServer
             return success;
         };
 
+        bool send_msg_c(const bool& c1 = true)
+        {
+            int sent_len = send(c1 ? client1_socket : client2_socket, buffer, filled, 0);    
+            bool success = (sent_len == filled);
+            return success;
+        };
+
         bool recv_msg(const int& __size, const bool& c1 = true)
         {
             int recv_len = recv(c1 ? client1_socket : client2_socket, buffer, sizeof(buffer), 0);
             filled = recv_len;
             return recv_len > 0;
+        };
+
+        void clear_buffer()
+        {
+            memset(buffer, 0, filled);
+            filled = 0;
         };
 
         char* get_buffer()

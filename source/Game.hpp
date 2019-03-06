@@ -86,18 +86,17 @@ class Game
             }
             bool s1_ate = snake1->try_eat(food_pos);
             bool s2_ate = snake2->try_eat(food_pos);
+            
             bool s1_dead = snake1->is_dead(*snake2);
             bool s2_dead = snake2->is_dead(*snake1);
-            std::cout 
-                << s1_ate << " "
-                << s2_ate << " "
-                << s1_dead << " "
-                << s2_dead << "\n";
+            
 
             snake1->move(display_size.x, display_size.y);
             snake2->move(display_size.x, display_size.y);
+            
             draw_snake(*snake1);
             draw_snake(*snake2);
+            
             return make_mask(s1_ate, s2_ate, s1_dead, s2_dead);
         };
 

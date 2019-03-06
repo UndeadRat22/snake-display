@@ -19,6 +19,8 @@ class ClientDisplay
     private:
         GameState state;
     public:
+        bool is_snake1;
+        
         void parse_mask(const char& mask)
         {
             std::cout << (int)mask << std::endl;
