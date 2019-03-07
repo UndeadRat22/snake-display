@@ -34,6 +34,7 @@ class ClientDisplay
         {
             display_size = Coord(__w, __h);
             output = new char[(__w + 1) * __h + 1];
+            is_init = false;
         };
         ClientDisplay(const int& __w, const int& __h, Coord __s1p, Coord __s2p, Coord fp)
         {
@@ -42,6 +43,7 @@ class ClientDisplay
             snake1 = new Snake(__s1p);
             snake2 = new Snake(__s2p);
             food_pos = fp;
+            is_init = true;
         };
 
         void init(Coord __s1p, Coord __s2p, Coord fp)
@@ -80,7 +82,6 @@ class ClientDisplay
 
         void update(const Coord& __c1, const Coord& __c2, const Coord& __fpos)
         {
-            clear();
             if (state.c1_ate)
                 snake1->eat(food_pos);
             if (state.c2_ate)
@@ -89,10 +90,19 @@ class ClientDisplay
             snake1->move(display_size.x, display_size.y, false);
             (*(snake1->parts))[0] = __c1;
             snake2->move(display_size.x, display_size.y, false);
-            (*(snake1->parts))[0] = __c2;
+            (*(snake2->parts))[0] = __c2;
+            
             food_pos = __fpos;
+            clear();
+            
             draw_snake(*snake1);
             draw_snake(*snake2);
+
+            output[index_from_coords(food_pos.x, food_pos.y)] = food;
+            Coord h1 = snake1->get_head();
+            Coord h2 = snake2->get_head();
+            output[index_from_coords(h1.x, h1.y)] = head;
+            output[index_from_coords(h2.x, h2.y)] = head;
         };
 
         bool won()

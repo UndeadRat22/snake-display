@@ -21,7 +21,7 @@ int main(int argc, char** argv)
         std::cerr << "Wrong port specified" << std::endl;
         exit(1);
     }
-    std::cout << "creating_socket" << std::endl;
+    //std::cout << "creating_socket" << std::endl;
     if (!client.create_socket())
     {
         std::cerr << "Could not create socket!" << std::endl;
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
         client.dispose();
         exit(1);
     }
-    std::cout << "connecting to server" << std::endl;
+    //std::cout << "connecting to server" << std::endl;
     if (!client.connect_to_server())
     {
         std::cerr << "Could not connect (server down | wrong ip | wrong port)." << std::endl;
@@ -45,10 +45,10 @@ int main(int argc, char** argv)
     int width = atoi(argv[3]);
     int height = atoi(argv[4]);
     
-    std::cout << "buffering" << std::endl;
+    //std::cout << "buffering" << std::endl;
     client.buffer_byte((char) width);
     client.buffer_byte((char) height);
-    std::cout << "sending" << std::endl;
+    //std::cout << "sending" << std::endl;
     
     if (!client.send_message())
     {
@@ -100,14 +100,25 @@ int main(int argc, char** argv)
         display.draw();
 
         std::cout 
-            << s1.x << " " << s1.y << "\n"
-            << s2.x << " " << s2.y << "\n"
-            << f.x << " " << f.y << "\n";
-        std::cout 
-            << (display.is_snake1 ? "true" : "false") << "\n";
+             << s1.x << " " << s1.y << "\n"
+             << s2.x << " " << s2.y << "\n"
+             << f.x << " " << f.y << "\n";
+        // std::cout 
+        //     << (display.is_snake1 ? "true" : "false") << "\n";
         display.parse_mask(resp[6]);
-        display.print_state();
+        //display.print_state();
 
+        if (display.won())
+        {
+            std::cout << "you won!" << std::endl;
+            break;
+        }
+        if (display.lost())
+        {
+            std::cout << "you lost!" << std::endl;
+            break;
+        }
+        
         client.clear_buffer();
         char input;
 
@@ -122,16 +133,6 @@ int main(int argc, char** argv)
             exit(1);
         }
 
-        if (display.won())
-        {
-            std::cout << "you won!" << std::endl;
-            break;
-        }
-        if (display.lost())
-        {
-            std::cout << "you lost!" << std::endl;
-            break;
-        }
     }
     client.dispose();
 }

@@ -12,6 +12,7 @@
 #include <string.h> //memset
 #include <unistd.h>
 
+
 #define BUFSIZE 1024
 
 struct reply 
@@ -83,9 +84,7 @@ class SnakeClient
 
         bool recv_message(int __size)
         {
-            std::cout << "recv.." << std::endl;
             recv_len = recv(server_socket, buffer, __size, 0);
-            std::cout << "finished" << std::endl;
             filled = recv_len;
             return recv_len == __size;
         };

@@ -114,7 +114,6 @@ int main(int argc, char** argv)
         server.buffer_byte(fp.x);
         server.buffer_byte(fp.y);
         //flags
-        std::cout << (int) flags << std::endl;
         server.buffer_byte(flags);
 
         if (!server.send_msg_both())
@@ -124,6 +123,8 @@ int main(int argc, char** argv)
             exit(1);
         }
 
+        if (display->won() || display->lost())
+            break;
 
         //get input from clients
         //c1
@@ -145,8 +146,6 @@ int main(int argc, char** argv)
         flags = game->update(i1, i2);
         game->draw();
         display->parse_mask(flags);
-        if (display->won() || display->lost())
-            break;
     }
     delete game;
     delete display;
