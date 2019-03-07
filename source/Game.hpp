@@ -90,6 +90,9 @@ class Game
             bool s1_ate = snake1->try_eat(food_pos);
             bool s2_ate = snake2->try_eat(food_pos);
 
+            if (s1_ate || s2_ate)
+                food_pos = random_coords();
+
             snake1->move(display_size.x, display_size.y);
             snake2->move(display_size.x, display_size.y);
             

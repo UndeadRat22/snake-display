@@ -14,7 +14,6 @@ int main(int argc, char** argv)
         std::cout << "USAGE: " << argv[0] << " <ip> <port> <width> <height>" << std::endl;
         exit(0);
     }
-    ClientDisplay display;
     SnakeClient client;
 
     if (!client.set_port(argv[2]))
@@ -67,8 +66,9 @@ int main(int argc, char** argv)
     //(these can be different can be different from the rq ones)
     width = (int) (client.get_buffer()[0]);
     height = (int) (client.get_buffer()[1]);
+    ClientDisplay display = ClientDisplay(width, height);
     display.is_snake1 = (bool) (client.get_buffer()[2]);
-
+    display.is_init = false;
     while(true)
     {
         //2bytes s1-pos, 2bytes s2-pos, 2bytes fpos, 1 byte flags
@@ -82,19 +82,27 @@ int main(int argc, char** argv)
 
         char* resp = client.get_buffer();
         
-        int s1x = (int) resp[0];
-        int s1y = (int) resp[1];
+        Coord s1, s2, f;
+        s1.x = (int) resp[0];
+        s1.y = (int) resp[1];
         
-        int s2x = (int) resp[2];
-        int s2y = (int) resp[3];
+        s2.x = (int) resp[2];
+        s2.y = (int) resp[3];
 
-        int fx = (int) resp[4];
-        int fy = (int) resp[5];
+        f.x = (int) resp[4];
+        f.y = (int) resp[5];
+
+        if (!display.is_init)
+            display.init(s1, s2, f);
+        else
+            display.update(s1, s2, f);
+
+        display.draw();
 
         std::cout 
-            << s1x << " " << s1y << "\n"
-            << s2x << " " << s2y << "\n"
-            << fx << " " << fy << "\n";
+            << s1.x << " " << s1.y << "\n"
+            << s2.x << " " << s2.y << "\n"
+            << f.x << " " << f.y << "\n";
         std::cout 
             << (display.is_snake1 ? "true" : "false") << "\n";
         display.parse_mask(resp[6]);

@@ -17,5 +17,5 @@ mask 1Byte:
     ------11 : draw (game over), same as ----11--,
     should be sent as ----1111
 
-[S] -> [C1], [C2]: [Game] s1.head, s2.head, food, mask
+[S] -> [C1], [C2]: [Game] s1.head, s2.head, food, mask, movement
 while !gameover goto loop

@@ -81,13 +81,15 @@ class Snake
             return false;
         };
         
-        void move(const int& lim_x, const int& lim_y)
+        void move(const int& lim_x, const int& lim_y, const bool& __move_head = true)
         {
             for (unsigned int i = parts->size(); i > 0; i--)
             {
                 Coord next = parts->at(i - 1);
                 (*parts)[i] = next;
             }
+            if (!__move_head)
+                return;
             Coord head = get_head();
             (*parts)[0] = Coord((head.x + speed_x + lim_x) % lim_x, (head.y + speed_y + lim_y) % lim_y);
         };
@@ -111,7 +113,7 @@ class Snake
                 if ((head.x == c.x) && (head.y == c.y))
                     return true;
             }
-            for (auto c : (*(other.parts)))
+            for (auto c : ((*other.parts)))
             {
                 if (c.x == head.x && c.y == head.y)
                     return true;

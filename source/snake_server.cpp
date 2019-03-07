@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -90,15 +91,20 @@ int main(int argc, char** argv)
     //start game pretty much
     
     Game* game = new Game(width, height);
-    ClientDisplay* display = new ClientDisplay();
+    Coord s1p = game->snake1->get_head();
+    Coord s2p = game->snake2->get_head();
+    Coord fp = game->food_pos;
+    ClientDisplay* display = new ClientDisplay(width, height, s1p, s2p, fp);
     char flags = 0;
+    char i1, i2;
     while (true)
     {
+        s1p = game->snake1->get_head();
+        s2p = game->snake2->get_head();
+        fp = game->food_pos;
+        
         server.clear_buffer();
         //s1 pos
-        Coord s1p = game->snake1->get_head();
-        Coord s2p = game->snake2->get_head();
-        Coord fp = game->food_pos;
         server.buffer_byte(s1p.x);
         server.buffer_byte(s1p.y);
         //s2 pos
@@ -119,7 +125,6 @@ int main(int argc, char** argv)
         }
 
 
-        char i1, i2;
         //get input from clients
         //c1
         if (!server.recv_msg(1, true))
