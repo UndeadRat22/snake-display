@@ -2,6 +2,9 @@
 #include <unistd.h>   //_getch*/
 #include <termios.h>  //_getch*/
 
+#include <iostream>
+#include <sys/select.h>
+
 char getch(){
     char buf=0;
     struct termios old={0};
@@ -20,6 +23,25 @@ char getch(){
     old.c_lflag|=ECHO;
     if(tcsetattr(0, TCSADRAIN, &old)<0)
         perror ("tcsetattr ~ICANON");
-    printf("%c\n",buf);
+    //printf("%c\n",buf);
     return buf;
- }
+ };
+
+
+char getch(int timeout)
+{
+    fd_set read_set;
+    FD_ZERO(&read_set);
+    FD_SET(STDIN_FILENO, &read_set);
+    struct timeval tv = { 0, timeout };
+    if (select(STDIN_FILENO + 1, &read_set, NULL, NULL, &tv) < 0)
+        return -1;
+    char c;
+    if (FD_ISSET(STDIN_FILENO, &read_set))
+    {
+        //std::cin >> c;
+        c = getch();
+        return c;
+    }
+    return -1;
+};
