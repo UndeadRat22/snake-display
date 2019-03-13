@@ -1,6 +1,8 @@
 #include "snake_client.hpp"
 #include "ClientDisplay.hpp"
 
+#include "conutil.h"
+
 #include <iostream>
 
 #include <stdlib.h>
@@ -69,6 +71,7 @@ int main(int argc, char** argv)
     ClientDisplay display = ClientDisplay(width, height);
     display.is_snake1 = (bool) (client.get_buffer()[2]);
     display.is_init = false;
+    char prev_input = 'a';
     while(true)
     {
         //2bytes s1-pos, 2bytes s2-pos, 2bytes fpos, 1 byte flags
@@ -99,10 +102,10 @@ int main(int argc, char** argv)
 
         display.draw();
 
-        std::cout 
-             << s1.x << " " << s1.y << "\n"
-             << s2.x << " " << s2.y << "\n"
-             << f.x << " " << f.y << "\n";
+        // std::cout 
+        //     << s1.x << " " << s1.y << "\n"
+        //     << s2.x << " " << s2.y << "\n"
+        //     << f.x << " " << f.y << "\n";
         // std::cout 
         //     << (display.is_snake1 ? "true" : "false") << "\n";
         display.parse_mask(resp[6]);
@@ -122,7 +125,17 @@ int main(int argc, char** argv)
         client.clear_buffer();
         char input;
 
-        std::cin >> input;
+        //std::cin >> input;
+        //.7s
+        input = getch(1000000);
+        if (input == -1)
+        {
+            input = prev_input;
+        }
+        else 
+        {
+            prev_input = input;
+        }
 
         client.buffer_byte(input);
 
